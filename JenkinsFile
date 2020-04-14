@@ -1,0 +1,42 @@
+pipeline {
+    environment {
+        registry = "devopstorontogroup1/docker-webapp-image"
+        registryCredential = 'dockerhub-devops'
+    }
+    agent any
+    tools {
+        maven 'maven'
+        nodejs 'nodejs'
+    }
+    stages {
+        stage("Source Control -Git Checkout"){
+            steps{
+                git url: 'https://github.com/devopstorontogroup1/docker-demo.git'
+            }
+        }
+        
+        stage("Compile - Maven") {
+            agent any
+            steps {
+                sh 'npm install'               
+            }
+        }
+        
+        stage('Build Docker image') {
+            steps{
+                script {
+                    docker.build registry
+                }
+            }
+        }
+        
+        stage('Push Docker image') {
+            steps {
+               withDockerRegistry([ credentialsId: "dockerhub-devops" , url: ""]) {
+                  
+                  sh 'docker push devopstorontogroup1/docker-webapp-image'
+               }
+            }
+        }
+    }
+}
