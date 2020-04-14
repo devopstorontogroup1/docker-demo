@@ -15,7 +15,7 @@ pipeline {
             }
         }
         
-        stage("Compile - Maven") {
+        stage("Compile - NPM") {
             agent any
             steps {
                 sh 'npm install'               
